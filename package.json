@@ -1,0 +1,15 @@
+{
+  "name": "portfolio-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@8.15.0",
+  "scripts": {
+    "build": "pnpm --recursive run build",
+    "dev:server": "pnpm --filter @portfolio/server dev",
+    "dev:client": "pnpm --filter @portfolio/client dev",
+    "lint": "pnpm --recursive run lint"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

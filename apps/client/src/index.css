@@ -1,0 +1,208 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ─── Design tokens ────────────────────────────────────────────────────────── */
+@theme {
+  /* Color palette */
+  --color-bg:           #0f1117;
+  --color-surface:      #1a1d27;
+  --color-surface-2:    #22263a;
+  --color-border:       #2e3250;
+  --color-accent:       #6366f1;
+  --color-accent-hover: #818cf8;
+  --color-text:         #e2e8f0;
+  --color-muted:        #94a3b8;
+  --color-success:      #22c55e;
+  --color-danger:       #ef4444;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Spacing scale extensions */
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+
+  /* Border radius */
+  --radius-card: 0.75rem;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 8px 32px rgba(99, 102, 241, 0.2);
+
+  /* Transitions */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Base resets ──────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* ─── Focus styles ─────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ─── Scrollbar (webkit) ───────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-muted); }
+
+/* ─── Typography prose overrides for dark theme ────────────────────────────── */
+.prose {
+  --tw-prose-body:        var(--color-text);
+  --tw-prose-headings:    var(--color-text);
+  --tw-prose-lead:        var(--color-muted);
+  --tw-prose-links:       var(--color-accent);
+  --tw-prose-bold:        var(--color-text);
+  --tw-prose-counters:    var(--color-muted);
+  --tw-prose-bullets:     var(--color-border);
+  --tw-prose-hr:          var(--color-border);
+  --tw-prose-quotes:      var(--color-muted);
+  --tw-prose-quote-borders: var(--color-accent);
+  --tw-prose-captions:    var(--color-muted);
+  --tw-prose-code:        var(--color-accent-hover);
+  --tw-prose-pre-code:    var(--color-text);
+  --tw-prose-pre-bg:      var(--color-surface);
+  --tw-prose-th-borders:  var(--color-border);
+  --tw-prose-td-borders:  var(--color-border);
+}
+
+/* ─── Utility: visually hidden (a11y) ─────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ─── Star / particle field ────────────────────────────────────────────────── */
+.stars-field {
+  position: fixed;
+  inset: 0;
+  z-index: -20;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffffff;
+  animation: twinkle var(--duration, 4s) ease-in-out infinite var(--delay, 0s);
+  opacity: 0;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0;    transform: scale(0.8); }
+  50%       { opacity: var(--max-opacity, 0.7); transform: scale(1.2); }
+}
+
+@keyframes float-badge {
+  0%, 100% { transform: translateY(0px)  rotate(var(--rot, 0deg)); }
+  50%       { transform: translateY(-6px) rotate(var(--rot, 0deg)); }
+}
+
+/* ─── Typewriter cursor blink ──────────────────────────────────────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  width: 3px;
+  height: 0.9em;
+  background: currentColor;
+  margin-left: 4px;
+  vertical-align: middle;
+  border-radius: 2px;
+  animation: blink 1s step-end infinite;
+}
+
+/* ─── Photo card tilt ──────────────────────────────────────────────────────── */
+.photo-card {
+  transform: rotate(2deg);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.photo-card:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+/* ─── Gradient text utility ────────────────────────────────────────────────── */
+.gradient-name {
+  background: linear-gradient(135deg, #e2e8f0 0%, #6366f1 50%, #818cf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-role {
+  background: linear-gradient(90deg, #f59e0b 0%, #ef4444 40%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ─── Floating badge animation ─────────────────────────────────────────────── */
+.float-badge {
+  animation: float-badge 3s ease-in-out infinite;
+}
+
+/* ─── Social icon button ───────────────────────────────────────────────────── */
+.social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s, background 0.15s, transform 0.15s;
+}
+.social-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  transform: translateY(-2px);
+}
