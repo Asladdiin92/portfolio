@@ -24,9 +24,17 @@ const app: Application = express();
 
 // ─── Core middleware pipeline ─────────────────────────────────────────────────
 app.use(helmet());
-app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+app.use(cors({
+  // Accept comma-separated list of allowed origins e.g. "https://a.vercel.app,http://localhost:5173"
+  origin: (origin, callback) => {
+    const allowed = env.CORS_ORIGIN.split(',').map((o) => o.trim());
+    if (!origin || allowed.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS: origin ${origin} not allowed`));
+  },
+  credentials: true,
+}));
 app.use(express.json());
-app.use(cookieParser()); // required to read HttpOnly refresh token cookie
+app.use(cookieParser());
 
 // ─── Utility routes ───────────────────────────────────────────────────────────
 app.get('/', (_req: Request, res: Response) => {

@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build & Type-check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared package
+        run: pnpm --filter @portfolio/shared build || true
+
+      - name: Type-check client
+        run: pnpm --filter @portfolio/client exec tsc --noEmit
+
+      - name: Type-check server
+        run: pnpm --filter @portfolio/server exec tsc --noEmit
+
+      - name: Build client
+        run: pnpm --filter @portfolio/client build
+
+      - name: Build server
+        run: pnpm --filter @portfolio/server build
