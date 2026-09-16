@@ -12,7 +12,7 @@ COPY apps/server/ ./apps/server/
 
 RUN pnpm install --no-frozen-lockfile
 
-RUN pnpm --filter @portfolio/shared build || true
+RUN pnpm --filter @portfolio/shared build
 
 RUN pnpm --filter @portfolio/server build
 
