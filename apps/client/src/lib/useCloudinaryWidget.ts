@@ -22,6 +22,20 @@ interface CloudinaryWidgetResult {
   };
 }
 
+export interface CloudinaryAsset {
+  secureUrl: string;
+  publicId: string;
+  resourceType: 'image' | 'video';
+  format: string;
+}
+
+interface CloudinaryWidgetOptions {
+  folder?: string;
+  resourceType?: 'image' | 'video' | 'auto';
+  clientAllowedFormats?: string[];
+  maxFileSize?: number;
+}
+
 interface CloudinaryWidget {
   open: () => void;
   close: () => void;
@@ -58,9 +72,12 @@ function loadWidgetScript(onReady: () => void) {
  * useCloudinaryWidget
  *
  * Opens the Cloudinary Upload Widget with cloud storage sources enabled.
- * Calls onSuccess(secureUrl) when the user selects/uploads an image.
+ * Calls onSuccess(asset) when the user selects/uploads media.
  */
-export function useCloudinaryWidget(onSuccess: (url: string) => void) {
+export function useCloudinaryWidget(
+  onSuccess: (asset: CloudinaryAsset) => void,
+  options: CloudinaryWidgetOptions = {}
+) {
   const widgetRef   = useRef<CloudinaryWidget | null>(null);
   const onSuccessRef = useRef(onSuccess);
   onSuccessRef.current = onSuccess;
@@ -72,7 +89,7 @@ export function useCloudinaryWidget(onSuccess: (url: string) => void) {
       widgetRef.current?.destroy();
       widgetRef.current = null;
     };
-  }, []);
+  }, [options]);
 
   const openWidget = useCallback(() => {
     loadWidgetScript(() => {
@@ -85,11 +102,11 @@ export function useCloudinaryWidget(onSuccess: (url: string) => void) {
         {
           cloudName: CLOUD_NAME,
           uploadPreset: 'portfolio_unsigned', // unsigned preset — see note below
-          folder: 'portfolio/card-images',
+          folder: options.folder ?? 'portfolio/card-images',
           maxFiles: 1,
-          resourceType: 'image',
-          maxFileSize: 10_000_000, // 10 MB
-          clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+          resourceType: options.resourceType ?? 'image',
+          maxFileSize: options.maxFileSize ?? 10_000_000,
+          clientAllowedFormats: options.clientAllowedFormats ?? ['jpg', 'jpeg', 'png', 'webp', 'gif'],
           // ── Cloud storage sources ──────────────────────────────────────
           sources: [
             'local',          // device file picker
@@ -135,7 +152,12 @@ export function useCloudinaryWidget(onSuccess: (url: string) => void) {
         (error: unknown, result: CloudinaryWidgetResult) => {
           if (error) return;
           if (result.event === 'success') {
-            onSuccessRef.current(result.info.secure_url);
+            onSuccessRef.current({
+              secureUrl: result.info.secure_url,
+              publicId: result.info.public_id,
+              resourceType: result.info.resource_type === 'video' ? 'video' : 'image',
+              format: result.info.format,
+            });
             widgetRef.current?.close();
           }
         }

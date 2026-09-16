@@ -55,7 +55,7 @@ function HeroImageUploader({
 
   useEffect(() => setPreview(currentUrl), [currentUrl]);
 
-  const openWidget = useCloudinaryWidget(async (url) => {
+  const openWidget = useCloudinaryWidget(async ({ secureUrl: url }) => {
     try {
       await apiClient.patch(`/config/${configKey}`, { value: url });
       setPreview(url);

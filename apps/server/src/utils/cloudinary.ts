@@ -20,6 +20,31 @@ export type UploadResult = {
   duration?:    number; // seconds, videos only
 };
 
+export function getCloudinaryUrls(publicId: string, mediaType: 'photo' | 'video') {
+  const url = cloudinary.url(publicId, {
+    resource_type: mediaType === 'video' ? 'video' : 'image',
+    secure: true,
+  });
+  const thumbnailUrl = mediaType === 'video'
+    ? cloudinary.url(publicId, {
+        resource_type: 'video',
+        transformation: [
+          { width: 640, height: 480, crop: 'fill' },
+          { fetch_format: 'jpg', quality: 'auto' },
+        ],
+        secure: true,
+      })
+    : cloudinary.url(publicId, {
+        transformation: [
+          { width: 640, height: 480, crop: 'fill' },
+          { quality: 'auto', fetch_format: 'auto' },
+        ],
+        secure: true,
+      });
+
+  return { url, thumbnailUrl };
+}
+
 /**
  * Upload a file buffer to Cloudinary.
  * - Photos go into the `portfolio/gallery` folder, transformation: auto quality + format

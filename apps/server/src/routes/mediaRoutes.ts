@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import { MediaModel } from '../models/Media.js';
-import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinary.js';
+import { uploadToCloudinary, deleteFromCloudinary, getCloudinaryUrls } from '../utils/cloudinary.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { requireRole } from '../middleware/requireRole.js';
 
@@ -109,6 +109,60 @@ router.post(
 
       return res.status(201).json({ success: true, data: media });
     } catch (err) { next(err); }
+  }
+);
+
+// ── POST /api/media/from-cloud — save a Cloudinary widget upload (admin) ────
+router.post(
+  '/from-cloud',
+  ...adminGuard,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {
+        secureUrl,
+        publicId,
+        resourceType,
+        caption,
+        category,
+        takenAt,
+        isPublic,
+      } = req.body as {
+        secureUrl?: string;
+        publicId?: string;
+        resourceType?: string;
+        caption?: string;
+        category?: string;
+        takenAt?: string;
+        isPublic?: boolean;
+      };
+
+      if (!secureUrl || !publicId || !['image', 'video'].includes(resourceType ?? '')) {
+        return res.status(400).json({ success: false, message: 'Invalid cloud media.' });
+      }
+      if (!caption?.trim()) {
+        return res.status(400).json({ success: false, message: 'Caption is required.' });
+      }
+      if (!category) {
+        return res.status(400).json({ success: false, message: 'Category is required.' });
+      }
+
+      const mediaType = resourceType === 'video' ? 'video' : 'photo';
+      const urls = getCloudinaryUrls(publicId, mediaType);
+      const media = await MediaModel.create({
+        url: secureUrl,
+        thumbnailUrl: urls.thumbnailUrl,
+        caption: caption.trim(),
+        category,
+        mediaType,
+        isPublic: isPublic !== false,
+        cloudinaryPublicId: publicId,
+        takenAt: takenAt ? new Date(takenAt) : new Date(),
+      });
+
+      return res.status(201).json({ success: true, data: media });
+    } catch (err) {
+      next(err);
+    }
   }
 );
 

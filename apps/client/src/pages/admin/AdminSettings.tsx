@@ -36,7 +36,7 @@ function CardImageUploader({ item, onUpdated }: { item: ConfigItem; onUpdated: (
   const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
   // ── Cloudinary widget — handles Google Drive, OneDrive, Dropbox etc ─────────
-  const openCloudWidget = useCloudinaryWidget(async (url: string) => {
+  const openCloudWidget = useCloudinaryWidget(async ({ secureUrl: url }) => {
     // Widget already uploaded to Cloudinary — just save the URL
     setError(null);
     try {

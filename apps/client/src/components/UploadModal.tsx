@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { apiClient } from '../lib/apiClient';
+import { useCloudinaryWidget, type CloudinaryAsset } from '../lib/useCloudinaryWidget';
 
 const CATEGORIES = ['Campus', 'Projects', 'Events', 'Community', 'Personal', 'Tech'];
 
@@ -22,6 +23,33 @@ export function UploadModal({ onClose, onUploaded }: UploadModalProps) {
   const [dragging, setDragging]    = useState(false);
 
   const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm', 'video/quicktime'];
+
+  const openCloudWidget = useCloudinaryWidget(
+    async (asset: CloudinaryAsset) => {
+      setError(null);
+      setUploading(true);
+      try {
+        await apiClient.post('/media/from-cloud', {
+          ...asset,
+          caption: caption.trim(),
+          category,
+          takenAt,
+          isPublic,
+        });
+        onUploaded();
+      } catch {
+        setError('Failed to save cloud media. Try again.');
+      } finally {
+        setUploading(false);
+      }
+    },
+    {
+      folder: 'portfolio/gallery',
+      resourceType: 'auto',
+      clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'mp4', 'webm', 'mov'],
+      maxFileSize: 50_000_000,
+    }
+  );
 
   function pickFile(f: File) {
     if (!ACCEPTED.includes(f.type)) {
@@ -107,6 +135,26 @@ export function UploadModal({ onClose, onUploaded }: UploadModalProps) {
             ✕
           </button>
         </div>
+
+        {/* Cloud storage picker */}
+        <button
+          type="button"
+          onClick={() => {
+            if (!caption.trim()) {
+              setError('Enter a caption before choosing cloud media.');
+              return;
+            }
+            openCloudWidget();
+          }}
+          disabled={uploading}
+          className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-[var(--color-accent)]/40 bg-[var(--color-accent)]/10 py-3 text-sm font-semibold text-[var(--color-accent)] transition-colors hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)]/20 disabled:opacity-40"
+        >
+          <span aria-hidden>☁️</span>
+          Add from Cloud Storage
+        </button>
+        <p className="text-center text-xs text-[var(--color-muted)]">
+          Google Drive · OneDrive · Dropbox · Unsplash · Device · Camera · Direct URL
+        </p>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5 px-6 py-5">
