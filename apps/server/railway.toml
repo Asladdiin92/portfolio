@@ -1,6 +1,5 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "npm install -g pnpm@8 && pnpm install --frozen-lockfile && pnpm --filter @portfolio/shared build || true && pnpm --filter @portfolio/server build"
 
 [deploy]
 startCommand = "node dist/server.js"
