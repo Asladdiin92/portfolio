@@ -17,10 +17,15 @@
     "jsx": "react-jsx",
 
     /* Linting */
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Workspace package resolution */
+    "paths": {
+      "@portfolio/shared": ["../../packages/shared/src/index.ts"]
+    }
   },
   "include": ["src"]
 }

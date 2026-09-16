@@ -6,7 +6,15 @@ import { useCloudinaryWidget } from '../../lib/useCloudinaryWidget';
 type ConfigMap = Record<string, string>;
 
 // ── Field definitions ─────────────────────────────────────────────────────────
-const TEXT_FIELDS = [
+interface TextField {
+  key: string;
+  label: string;
+  placeholder: string;
+  hint: string;
+  textarea?: boolean;
+}
+
+const TEXT_FIELDS: TextField[] = [
   { key: 'hero_name_first',       label: 'First name',            placeholder: 'Asladdiin',                         hint: 'Large gradient name — top line'         },
   { key: 'hero_name_last',        label: 'Last name',             placeholder: 'Abduqaadir',                        hint: 'Smaller muted name — second line'       },
   { key: 'hero_badge',            label: 'Status badge',          placeholder: 'Open to freelance & opportunities', hint: 'Green dot badge text at the top'        },
@@ -19,7 +27,7 @@ const TEXT_FIELDS = [
   { key: 'hero_badge2',           label: 'Floating badge 2',      placeholder: 'React',                             hint: 'Top-right floating chip on photo'       },
   { key: 'hero_badge3',           label: 'Floating badge 3',      placeholder: 'Node.js',                           hint: 'Bottom-left floating chip on photo'     },
   { key: 'hero_badge4',           label: 'Floating badge 4',      placeholder: 'GIS',                               hint: 'Bottom-right floating chip on photo'    },
-] as const;
+] satisfies TextField[];
 
 // ── Image uploader (reusable for profile + background) ───────────────────────
 function HeroImageUploader({
