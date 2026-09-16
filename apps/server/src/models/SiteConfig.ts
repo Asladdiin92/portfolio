@@ -23,6 +23,9 @@ export const SiteConfigModel = model<ISiteConfigDocument>('SiteConfig', siteConf
 
 // ── Default config keys ───────────────────────────────────────────────────────
 export const DEFAULT_CONFIG: Array<Pick<ISiteConfig, 'key' | 'label'>> = [
+  // ── Application branding ─────────────────────────────────────────────────
+  { key: 'site_logo',     label: 'Portfolio logo' },
+  { key: 'site_app_icon', label: 'App icon / favicon' },
   // ── About section card images ──────────────────────────────────────────────
   { key: 'card_img_location',  label: 'Location card image'            },
   { key: 'card_img_about',     label: 'About Me card image'            },

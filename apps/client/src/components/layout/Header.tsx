@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { apiClient } from '../../lib/apiClient';
 
 const navLinks = [
   { to: '/',         label: 'Home'     },
@@ -10,8 +11,37 @@ const navLinks = [
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState('');
   const { isAdmin, logout }     = useAuth();
   const navigate                = useNavigate();
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadBranding = () => apiClient.get<{ data: Record<string, string> }>('/config')
+      .then(({ data }) => {
+        if (cancelled) return;
+        const logo = data.data?.site_logo ?? '';
+        const appIcon = data.data?.site_app_icon ?? '';
+        setLogoUrl(logo);
+        if (appIcon) {
+          let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+          if (!link) {
+            link = document.createElement('link');
+            link.rel = 'icon';
+            document.head.appendChild(link);
+          }
+          link.href = appIcon;
+        }
+        document.title = 'Asladdiin — Portfolio';
+      })
+      .catch(() => {});
+    loadBranding();
+    window.addEventListener('site-branding-updated', loadBranding);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('site-branding-updated', loadBranding);
+    };
+  }, []);
 
   async function handleLogout() {
     setMenuOpen(false);
@@ -31,12 +61,19 @@ export function Header() {
             aria-label="Go to home"
             className="flex items-center gap-2 no-underline"
           >
-            {/* Home icon */}
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-              </svg>
-            </span>
+            {logoUrl ? (
+              <img
+                src={logoUrl}
+                alt=""
+                className="h-8 w-8 rounded-lg object-contain"
+              />
+            ) : (
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </span>
+            )}
             <span className="text-sm font-bold italic text-[var(--color-accent)] tracking-tight">
               asladin.dev
             </span>

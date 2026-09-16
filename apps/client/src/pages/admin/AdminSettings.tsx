@@ -21,6 +21,17 @@ const CLOUD_SOURCES = [
   { name: 'Direct URL',    icon: '🔗', color: '#94a3b8' },
 ];
 
+const IMAGE_CONFIG_KEYS = new Set([
+  'card_img_location',
+  'card_img_about',
+  'card_img_learning',
+  'card_img_education',
+  'card_img_growth',
+  'card_img_focus',
+  'card_img_craft',
+  'exp_campus_photo',
+]);
+
 // ── Single card image manager ─────────────────────────────────────────────────
 function CardImageUploader({ item, onUpdated }: { item: ConfigItem; onUpdated: () => void }) {
   const fileInputRef              = useRef<HTMLInputElement>(null);
@@ -41,6 +52,7 @@ function CardImageUploader({ item, onUpdated }: { item: ConfigItem; onUpdated: (
     setError(null);
     try {
       await apiClient.patch(`/config/${item.key}`, { value: url });
+      window.dispatchEvent(new Event('site-branding-updated'));
       onUpdated();
     } catch {
       setError('Failed to save. Try again.');
@@ -59,6 +71,7 @@ function CardImageUploader({ item, onUpdated }: { item: ConfigItem; onUpdated: (
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: (e) => { if (e.total) setProgress(Math.round((e.loaded / e.total) * 100)); },
       });
+      window.dispatchEvent(new Event('site-branding-updated'));
       onUpdated();
     } catch { setError('Upload failed. Try again.'); }
     finally { setUploading(false); }
@@ -73,6 +86,7 @@ function CardImageUploader({ item, onUpdated }: { item: ConfigItem; onUpdated: (
     try {
       await apiClient.patch(`/config/${item.key}`, { value: url });
       setUrlInput(''); setShowUrl(false);
+      window.dispatchEvent(new Event('site-branding-updated'));
       onUpdated();
     } catch { setError('Save failed. Try again.'); }
     finally { setUrlSaving(false); }
@@ -84,6 +98,7 @@ function CardImageUploader({ item, onUpdated }: { item: ConfigItem; onUpdated: (
     try {
       await apiClient.patch(`/config/${item.key}`, { value: '' });
       setPreviewError(false);
+      window.dispatchEvent(new Event('site-branding-updated'));
       onUpdated();
     } catch { setError('Remove failed.'); }
   }
@@ -262,8 +277,9 @@ export function AdminSettings() {
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-lg font-bold text-[var(--color-text)]">Site Settings — Card Images</h2>
+        <h2 className="text-lg font-bold text-[var(--color-text)]">Site Settings</h2>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
+          Manage your portfolio logo, app icon, and section images.
           Set a hover image for each About section card.
           Click <strong className="text-[var(--color-accent)]">☁️ Add from Cloud Storage</strong> to
           pick from Google Drive, OneDrive, Dropbox, or directly from your device.
@@ -283,11 +299,28 @@ export function AdminSettings() {
       )}
 
       {!loading && !error && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
-            <CardImageUploader key={item.key} item={item} onUpdated={load} />
-          ))}
-        </div>
+        <>
+          <div className="mb-8">
+            <h3 className="mb-3 text-sm font-semibold uppercase tracking-widest text-[var(--color-muted)]">
+              Portfolio branding
+            </h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {items.filter((item) => item.key === 'site_logo' || item.key === 'site_app_icon').map((item) => (
+                <CardImageUploader key={item.key} item={item} onUpdated={load} />
+              ))}
+            </div>
+          </div>
+          <div>
+            <h3 className="mb-3 text-sm font-semibold uppercase tracking-widest text-[var(--color-muted)]">
+              Section images
+            </h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {items.filter((item) => IMAGE_CONFIG_KEYS.has(item.key)).map((item) => (
+                <CardImageUploader key={item.key} item={item} onUpdated={load} />
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
