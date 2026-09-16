@@ -6,6 +6,7 @@ RUN npm install -g pnpm@8.15.1
 
 COPY package.json pnpm-workspace.yaml ./
 COPY pnpm-lock.yaml* ./
+COPY tsconfig.base.json ./
 COPY packages/ ./packages/
 COPY apps/server/ ./apps/server/
 
