@@ -5,19 +5,18 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm@8.15.1
 
-# Copy monorepo root files needed for workspace
-COPY pnpm-workspace.yaml ./
-COPY package.json ./
+# Copy monorepo root files
+COPY package.json pnpm-workspace.yaml ./
 COPY pnpm-lock.yaml* ./
 
-# Copy packages
+# Copy workspace packages
 COPY packages/ ./packages/
 COPY apps/server/ ./apps/server/
 
-# Install all dependencies
+# Install all workspace dependencies
 RUN pnpm install --no-frozen-lockfile
 
-# Build shared package
+# Build shared types
 RUN pnpm --filter @portfolio/shared build || true
 
 # Build server
