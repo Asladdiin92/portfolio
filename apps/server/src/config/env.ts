@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 // Load .env in development; Railway injects vars directly in production
 dotenv.config();
 dotenv.config({
-  path: resolve(dirname(fileURLToPath(import.meta.url)), '../../../.env'),
+  path: resolve(dirname(fileURLToPath(import.meta.url)), '../../../../.env'),
 });
 
 const isProd = process.env.NODE_ENV === 'production';
