@@ -148,12 +148,12 @@ function MediaCard({ item, onClick }: { item: MediaItem; onClick: () => void }) 
       className="group relative w-full overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]"
     >
       {/* Thumbnail */}
-      <div className="aspect-square overflow-hidden">
+      <div className="overflow-hidden">
         <img
-          src={item.thumbnailUrl}
+          src={item.mediaType === 'photo' ? item.url : item.thumbnailUrl}
           alt={item.caption}
           loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="block h-auto max-h-[32rem] w-full object-contain transition-transform duration-300 group-hover:scale-105"
         />
       </div>
 
@@ -291,7 +291,7 @@ export function GalleryPage() {
       {loading && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="aspect-square animate-pulse rounded-[var(--radius-card)] bg-[var(--color-surface)]" />
+            <div key={i} className="h-64 animate-pulse rounded-[var(--radius-card)] bg-[var(--color-surface)]" />
           ))}
         </div>
       )}

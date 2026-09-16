@@ -113,7 +113,12 @@ function CardImageUploader({ item, onUpdated }: { item: ConfigItem; onUpdated: (
             <img
               src={item.value}
               alt={item.label}
-              className="h-full w-full object-cover"
+              className={[
+                'h-full w-full',
+                item.key === 'site_logo' || item.key === 'site_app_icon'
+                  ? 'object-contain p-4'
+                  : 'object-contain',
+              ].join(' ')}
               onError={() => setPreviewError(true)}
             />
             <button
@@ -228,7 +233,7 @@ function CardImageUploader({ item, onUpdated }: { item: ConfigItem; onUpdated: (
               <img
                 src={urlInput.trim()}
                 alt="URL preview"
-                className="h-16 w-full rounded-lg object-cover border border-[var(--color-border)]"
+                className="h-16 w-full rounded-lg object-contain border border-[var(--color-border)]"
                 onError={() => setError('⚠️ Image failed to load. Use a direct image URL (.jpg/.png/.webp).')}
                 onLoad={() => setError(null)}
               />

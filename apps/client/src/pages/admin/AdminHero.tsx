@@ -97,7 +97,7 @@ function HeroImageUploader({
       <div className={`relative w-full bg-[var(--color-surface-2)] ${aspectClass}`}>
         {preview ? (
           <>
-            <img src={preview} alt={label} className={`h-full w-full object-cover ${objectPosition}`} />
+            <img src={preview} alt={label} className={`h-auto max-h-full w-full object-contain ${objectPosition}`} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <p className="absolute bottom-3 left-3 text-xs font-semibold text-white">{label}</p>
             <button

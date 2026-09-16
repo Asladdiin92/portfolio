@@ -29,16 +29,12 @@ export function getCloudinaryUrls(publicId: string, mediaType: 'photo' | 'video'
     ? cloudinary.url(publicId, {
         resource_type: 'video',
         transformation: [
-          { width: 640, height: 480, crop: 'fill' },
           { fetch_format: 'jpg', quality: 'auto' },
         ],
         secure: true,
       })
     : cloudinary.url(publicId, {
-        transformation: [
-          { width: 640, height: 480, crop: 'fill' },
-          { quality: 'auto', fetch_format: 'auto' },
-        ],
+        transformation: [{ quality: 'auto', fetch_format: 'auto' }],
         secure: true,
       });
 
@@ -82,15 +78,11 @@ export async function uploadToCloudinary(
     ? cloudinary.url(result.public_id, {
         resource_type: 'video',
         transformation: [
-          { width: 640, height: 480, crop: 'fill' },
           { fetch_format: 'jpg', quality: 'auto' },
         ],
       })
     : cloudinary.url(result.public_id, {
-        transformation: [
-          { width: 640, height: 480, crop: 'fill' },
-          { quality: 'auto', fetch_format: 'auto' },
-        ],
+        transformation: [{ quality: 'auto', fetch_format: 'auto' }],
       });
 
   return {

@@ -81,7 +81,7 @@ function HoverImageCard({
           <img
             src={imageUrl}
             alt=""
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain"
           />
           {/* Dark gradient so text stays readable on hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />

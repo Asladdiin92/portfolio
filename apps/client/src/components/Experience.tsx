@@ -97,7 +97,7 @@ function EducationColumn({ campusPhoto }: { campusPhoto?: string }) {
                 <img
                   src={campusPhoto || ed.photo}
                   alt={`${ed.institution} campus`}
-                  className="h-52 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="block h-auto max-h-72 w-full object-contain transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (
                 /* Placeholder when no photo is set */

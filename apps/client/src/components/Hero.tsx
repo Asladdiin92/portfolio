@@ -271,7 +271,7 @@ export function Hero() {
               <img
                 src={profileUrl || profileImg}
                 alt={`${nameFirst} ${nameLast}`}
-                className="h-[380px] w-[300px] object-cover object-top sm:h-[420px] sm:w-[340px]"
+                className="block max-h-[420px] w-auto max-w-full object-contain object-top"
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                 <p className="text-xs font-semibold text-white/90">Haramaya University</p>
