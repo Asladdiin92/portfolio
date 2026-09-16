@@ -64,9 +64,8 @@ userSchema.methods.comparePassword = function (
 // Never return the password or refreshToken in any JSON response
 userSchema.set('toJSON', {
   transform: (_doc, ret) => {
-    delete ret.password;
-    delete ret.refreshToken;
-    return ret;
+    const { password: _password, refreshToken: _refreshToken, ...safeUser } = ret;
+    return safeUser;
   },
 });
 

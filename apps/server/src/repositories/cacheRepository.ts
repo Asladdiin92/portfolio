@@ -1,4 +1,4 @@
-import pino from 'pino';
+import { pino } from 'pino';
 import { redisClient } from '../config/redis.js';
 
 const logger = pino({

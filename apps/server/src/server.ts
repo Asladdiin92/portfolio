@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
-import pino from 'pino';
+import { pino } from 'pino';
 import { env } from './config/env.js';
 import { redisClient } from './config/redis.js';
 import { authenticate } from './middleware/authenticate.js';
