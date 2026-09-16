@@ -10,8 +10,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      // Resolve workspace package from source so Vercel doesn't need to build it separately
-      '@portfolio/shared': resolve(__dirname, '../../packages/shared/src/index.ts'),
+      '@portfolio/shared': resolve(import.meta.dirname, '../../packages/shared/src/index.ts'),
     },
   },
   define: {
