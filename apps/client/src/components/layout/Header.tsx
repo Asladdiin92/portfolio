@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { apiClient } from '../../lib/apiClient';
@@ -12,6 +12,7 @@ const navLinks = [
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState('');
+  const headerRef              = useRef<HTMLElement>(null);
   const { isAdmin, logout }     = useAuth();
   const navigate                = useNavigate();
 
@@ -32,7 +33,6 @@ export function Header() {
           }
           link.href = appIcon;
         }
-        document.title = 'Asladdiin — Portfolio';
       })
       .catch(() => {});
     loadBranding();
@@ -43,6 +43,33 @@ export function Header() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setMenuOpen(false);
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target;
+      if (target instanceof Node && !headerRef.current?.contains(target)) {
+        setMenuOpen(false);
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('pointerdown', handlePointerDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, [menuOpen]);
+
   async function handleLogout() {
     setMenuOpen(false);
     await logout();
@@ -52,7 +79,7 @@ export function Header() {
   return (
     <>
       {/* ── Pill navbar ───────────────────────────────────────────────────── */}
-      <header className="fixed top-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2">
+      <header ref={headerRef} className="fixed top-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2">
         <div className="flex items-center justify-between rounded-2xl border border-[var(--color-border)]/60 bg-[var(--color-bg)]/80 px-5 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl">
 
           {/* Logo */}
@@ -64,7 +91,7 @@ export function Header() {
             {logoUrl ? (
               <img
                 src={logoUrl}
-                alt=""
+                alt="Asladdiin logo"
                 className="h-8 w-8 rounded-lg object-contain"
               />
             ) : (
